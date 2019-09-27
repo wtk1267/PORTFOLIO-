@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="co.kr.DAO.PlanDAO">
+	<insert id="insertPlan" parameterType="PlanVO">
+		insert into plan(member_Id, schedule_Subject, schedule_StartDate, schedule_EndDate)
+		values (#{member_Id}, #{schedule_Subject}, #{schedule_StartDate}, #{schedule_EndDate})
+	</insert>
+  
+  	<select id="selectList" resultType="PlanVO">
+  		select * from plan
+  		where member_Id = #{member_Id}
+  	
+  	</select>
+  	
+  	<delete id="deletePlan">
+  		delete from plan
+  		where schedule_Id = #{schedule_Id}
+  	</delete>
+  	
+  	<update id="modifyPlan" parameterType="PlanVO">
+  		update plan
+  		set schedule_Subject = #{schedule_Subject}, schedule_StartDate = #{schedule_StartDate},
+  		schedule_EndDate = #{schedule_EndDate}
+  		where schedule_Id = #{schedule_Id}
+  	</update>
+</mapper>

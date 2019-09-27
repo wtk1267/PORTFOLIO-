@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="co.kr.DAO.MessageDAO">
+  	
+  	<insert id="sendMessage" parameterType="MessageVO">
+  	
+  		insert into message(member_Id, msg_Send_Id, msg_Receive_Id, msg_Contents, msg_Subject)
+  		values(#{member_Id}, #{msg_Send_Id}, #{msg_Receive_Id}, #{msg_Contents}, #{msg_Subject})
+  	
+  	</insert>
+
+  	
+  	<select id="sendMsgList" resultType="MessageVO">
+
+  		select t.*, @rownum := @rownum +1 as rownum 
+		from message t, (select @rownum:=0) r
+		where member_Id = #{member_Id} and msg_Send_Id = #{member_Id} and msg_Status != 1
+		order by rownum desc, msg_Time desc
+
+  	</select>
+
+  	
+  	<select id="receiveMsgList" resultType="MessageVO">
+
+  		select t.*, @rownum := @rownum +1 as rownum 
+  		from message t, (select @rownum:=0) r
+  		where msg_Receive_Id = #{member_Id} and msg_Status != 1
+  		order by rownum desc, msg_Time desc
+
+  	</select>
+
+  	
+  	<select id="msgDetail" resultType="MessageVO">
+  	
+		select * from message
+		where msg_Id = #{msg_Id}
+
+  	</select>
+  	
+  	
+  	
+  	
+  	<update id="statusConverter">
+
+		update message 
+		set msg_Status = 2
+		where msg_Id = #{msg_Id}  	
+  	
+  	</update>
+  
+  
+  
+  </mapper>

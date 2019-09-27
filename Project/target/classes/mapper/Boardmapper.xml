@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace="co.kr.DAO.BoardDAO">
+  		<select id="ListAll" resultType="BoardVO">
+  			<![CDATA[
+  			select t.*, @rownum := @rownum +1 as rownum 
+  		    from board t, (select @rownum:=0) r
+  			where board_Status = 0 and board_Id = #{board_Id} and board_No > 0 
+  			order by rownum desc, board_Time desc
+  			limit #{page.startPage}, #{page.numPerPage}
+		]]>
+  		</select>
+  	
+  		<insert id="insertInfo" parameterType="BoardVO">
+  			insert into board(member_Id, board_Subject, board_Contents, board_Ip,  
+  			board_Id)
+  			values (#{member_Id}, #{board_Subject}, #{board_Contents}, #{board_Ip},
+  			 #{board_Id})
+  		</insert>	
+  		
+  		<select id="listOnebyNo" parameterType="map" resultType="BoardVO">
+  			select * from board
+  			where board_Status = 0 and board_No = #{board_No} and board_Id = #{board_Id} 
+  		
+  		</select>
+  		
+  		<select id="countData" resultType="int">
+  		<![CDATA[
+  			select count(*)
+  			from board
+  			where board_Status = 0 and board_Id = #{board_Id} and board_No > 0
+		]]>
+  		</select>
+  		
+  		<update id="modifyBoard" parameterType="boardVO">
+  			<![CDATA[
+  				update board
+  				set board_Subject = #{board_Subject}, board_Contents = #{board_Contents}
+  				where board_No = #{board_No}
+		]]>
+  		</update>
+  		
+  		<update id="deleteBoard" parameterType="int">
+  		<![CDATA[
+  			update board	
+  			set board_Status = 1
+  			where board_No = #{board_No}	
+		]]>
+  		
+  		</update>
+		
+		<select id="searchList" parameterType="map" resultType="boardVO">
+		<![CDATA[
+			select t.*, @rownum := @rownum +1 as rownum 
+ 			from board t, (select @rownum:=0) r
+  			where board_Status = 0 and board_Id = #{board_Id} and board_No > 0 
+  			and ${fCri.searchType} like concat('%', #{fCri.findSome},'%')
+   			order by rownum desc, board_Time desc
+   			limit #{fCri.startPage}, #{fCri.numPerPage}
+		]]>
+		</select>  		
+  
+  		<update id="hitCount">
+  			update board
+  			set board_Hit = board_Hit + 1 
+  			where board_No = #{board_No}
+  		</update>
+  
+  
+  </mapper>

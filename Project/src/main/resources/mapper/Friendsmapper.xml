@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="co.kr.DAO.FriendsDAO">
+	<insert id="friendsAdd" parameterType="FriendsVO">
+
+		insert into friends(member_Id, friends_Id)
+		values(#{member_Id}, #{friends_Id})
+
+	</insert>
+
+	<select id="existFriends" parameterType="FriendsVO" resultType="int">
+		
+		select count(*)
+		from friends
+		where member_Id = #{member_Id} and friends_Id = #{friends_Id}
+		 
+	</select>
+	
+	<select id="friendsList" resultType="MemberVO">
+		<![CDATA[
+			
+			select * from member
+			where member_Id in
+				(select friends_Id
+	 			 from friends
+	 			 where member_Id = #{member_Id});
+			  				
+		]]>
+	</select>
+	
+	<update id="friendsMsgBan" parameterType="FriendsVO">
+		update friends  
+		set friends_Status = '1'
+		where member_Id = #{member_Id} and friends_Id = #{friends_Id} and friends_Status = '0' 
+	</update>
+
+	<select id="searchStatus" parameterType="FriendsVO" resultType="int">
+		select friends_Status
+		from friends
+		where member_Id = #{member_Id} and friends_Id = #{friends_Id}
+	</select>
+	
+	<update id="friendsMsgBanCancel" parameterType="FriendsVO">
+		update friends  
+		set friends_Status = '0'
+		where member_Id = #{member_Id} and friends_Id = #{friends_Id} and friends_Status = '1' 
+	</update>
+	
+	<delete id="deleteFriends" parameterType="FriendsVO">
+		delete from friends
+		where member_Id = #{member_Id} and friends_Id = #{friends_Id}
+	</delete>	
+
+	
+
+</mapper>
